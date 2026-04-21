@@ -2,18 +2,20 @@
 const myLibrary = [];
 
 // BOOK CONSTRUCTOR
-function Book(title, author, pages, status) {
-    this.id = crypto.randomUUID();
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.status = status;
-}
+class Book {
+    constructor(title, author, pages, status) {
+        this.id = crypto.randomUUID();
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.status = status;
+    }
 
-// PROTOTYPE METHOD – Toggle read status
-Book.prototype.toggleStatus = function () {
-    this.status = this.status === "Read" ? "Not Read" : "Read";
-};
+    // Method to toggle read status
+    toggleStatus() {
+        this.status = this.status === "Read" ? "Not Read" : "Read";
+    }
+}
 
 // ADD BOOK TO LIBRARY
 function addBookToLibrary(title, author, pages, status) {
