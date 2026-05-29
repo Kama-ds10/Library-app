@@ -1,44 +1,101 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
-    font-family: Arial;
-    padding: 20px;
-    background: #f3f3f3;
-}
+font-family: Arial, sans-serif;
+background: #f4f4f4;
+padding: 2rem;
+ }
 
-#book-container {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-}
+ h1 {
+    font-size: 2rem;
+ }
 
-.book-card {
-    padding: 15px;
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.btn {
-    padding: 8px 14px;
-    margin-top: 10px;
+ /* button */
+ .btn{
     border: none;
-    background: #4c8bf5;
-    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
     cursor: pointer;
-    border-radius: 6px;
-}
+    background: #222;
+    color:white;
+    margin-top: 0.5rem;
+    gap:2rem;
+    transition: opacity 0.3s ease;
+ }
 
-.book-card button {
-    margin-right: 5px;
-}
+ .btn:hover{
+    opacity: 0.9;
+ }
 
-dialog {
-    padding: 20px;
-    border: none;
-    border-radius: 10px;
-}
+ .cancel-btn{
+    background:crimson;
+ }
 
-dialog::backdrop {
-    background: rgba(0,0,0,0.4);
+    /* book container */
+    #book-container{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* book card */
+    .book-card{
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .book-card h3{
+        margin-bottom: 0.5rem;
+    }
+
+    .book-card p{
+        margin-bottom: 1rem;
+    }
+
+    /* Dialog */
+    dialog{
+        border: none;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    dialog::backdrop{
+        background: rgba(0,0,0,0.5);
+    }
+
+    /* form */
+    form{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    form label{
+        font-weight: bold;
+       margin-top: 1rem;
+     margin-bottom: 0.3rem;
+    }
+
+    form input, form select{
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* BUTTON CONTAINER */
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
 }
