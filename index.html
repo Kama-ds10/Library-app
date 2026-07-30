@@ -1,99 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library App</title>
-
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- APP HEADER -->
-    <header>
-        <h1>My Library</h1>
-
-        <button id="new-book-btn" class="btn">
-            Add New Book
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Classical Library</title>
+    <!-- Google Fonts for Editorial Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <!-- APP HEADER -->
+      <header class="app-header">
+        <div class="header-titles">
+          <h1>The Library</h1>
+          <p class="subtitle">A curated collection of your literary journey</p>
+        </div>
+        <button id="new-book-btn" class="btn btn-primary">
+          <span>+</span> Add New Entry
         </button>
-    </header>
+      </header>
 
-    <!-- BOOK DISPLAY CONTAINER -->
-    <main id="book-container"></main>
+      <!-- STATS BAR -->
+      <section class="stats-bar">
+        <div class="stat-item">Total Books: <span id="stat-total">0</span></div>
+        <div class="stat-item">Read: <span id="stat-read">0</span></div>
+        <div class="stat-item">Unread: <span id="stat-unread">0</span></div>
+      </section>
 
-    <!-- MODAL -->
+      <!-- BOOK DISPLAY CONTAINER -->
+      <main id="book-container" class="empty-library"></main>
+    </div>
+
+    <!-- MODAL DIALOG -->
     <dialog id="book-dialog">
+      <form id="book-form" novalidate>
+        <div class="form-header">
+          <h2>Catalog New Book</h2>
+          <p>Enter the details to add this volume to your shelves.</p>
+        </div>
 
-        <!-- REMOVE method="dialog" -->
-        <form id="book-form">
+        <!-- TITLE -->
+        <div class="input-group">
+          <label for="title">Book Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="e.g., The Odyssey"
+            required
+          />
+        </div>
 
-            <h2>Add New Book</h2>
+        <!-- AUTHOR -->
+        <div class="input-group">
+          <label for="author">Author</label>
+          <input
+            type="text"
+            id="author"
+            name="author"
+            placeholder="e.g., Homer"
+            required
+          />
+        </div>
 
-            <!-- TITLE -->
-            <label for="title">Title</label>
+        <!-- PAGES & STATUS ROW -->
+        <div class="form-row">
+          <div class="input-group">
+            <label for="pages">Page Count</label>
             <input
-                type="text"
-                id="title"
-                name="title"
-                required
-            >
+              type="number"
+              id="pages"
+              name="pages"
+              min="1"
+              placeholder="384"
+              required
+            />
+          </div>
 
-            <!-- AUTHOR -->
-            <label for="author">Author</label>
-            <input
-                type="text"
-                id="author"
-                name="author"
-                required
-            >
-
-            <!-- PAGES -->
-            <label for="pages">Pages</label>
-            <input
-                type="number"
-                id="pages"
-                name="pages"
-                min="1"
-                required
-            >
-
-            <!-- STATUS -->
-            <label for="status">Status</label>
-            <select id="status">
-
-                <option value="Read">
-                    Read
-                </option>
-
-                <option value="Not Read">
-                    Not Read
-                </option>
-
+          <div class="input-group">
+            <label for="status">Reading Status</label>
+            <select id="status" name="status">
+              <option value="Read">Completed</option>
+              <option value="Not Read">Plan to Read</option>
             </select>
+          </div>
+        </div>
 
-            <!-- BUTTONS -->
-            <div class="form-buttons">
-
-                <button type="submit" class="btn">
-                    Add Book
-                </button>
-
-                <button
-                    type="button"
-                    id="close-dialog"
-                    class="btn cancel-btn"
-                >
-                    Cancel
-                </button>
-
-            </div>
-
-        </form>
-
+        <!-- ACTION BUTTONS -->
+        <div class="form-buttons">
+          <button type="button" id="close-dialog" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">Catalog Book</button>
+        </div>
+      </form>
     </dialog>
 
     <script src="app.js"></script>
-
-</body>
+  </body>
 </html>
-

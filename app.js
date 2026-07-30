@@ -1,340 +1,194 @@
-
+// ==========================================================================
+// APPLICATION STATE
+// ==========================================================================
 const myLibrary = [];
 
 class Book {
     constructor(title, author, pages, status) {
-
-        // Unique ID for each book
         this.id = crypto.randomUUID();
-
         this.title = title;
         this.author = author;
-        this.pages = pages;
-        this.status = status;
+        this.pages = parseInt(pages, 10) || 0;
+        this.status = status === "Read" ? "Read" : "Not Read";
     }
 
-    // Toggle read status
     toggleStatus() {
-        this.status =
-            this.status === "Read"
-                ? "Not Read"
-                : "Read";
+        this.status = this.status === "Read" ? "Not Read" : "Read";
     }
 }
 
+// ==========================================================================
+// CORE DOM ELEMENTS
+// ==========================================================================
+const container = document.getElementById("book-container");
+const bookDialog = document.getElementById("book-dialog");
+const bookForm = document.getElementById("book-form");
+const newBookBtn = document.getElementById("new-book-btn");
+const closeDialog = document.getElementById("close-dialog");
 
-// ======================================
-// ADD BOOK TO LIBRARY
-// ======================================
+// Stats Elements
+const statTotal = document.getElementById("stat-total");
+const statRead = document.getElementById("stat-read");
+const statUnread = document.getElementById("stat-unread");
 
+// Form Inputs
+const titleInput = document.getElementById("title");
+const authorInput = document.getElementById("author");
+const pagesInput = document.getElementById("pages");
+const statusInput = document.getElementById("status");
+
+// ==========================================================================
+// MUTATIONS & STATE MANAGEMENT
+// ==========================================================================
 function addBookToLibrary(title, author, pages, status) {
-
-    const newBook = new Book(
-        title,
-        author,
-        pages,
-        status
-    );
-
+    const newBook = new Book(title, author, pages, status);
     myLibrary.push(newBook);
-
-    displayBooks();
+    updateUI();
 }
 
+function removeBook(id) {
+    const index = myLibrary.findIndex(book => book.id === id);
+    if (index !== -1) {
+        myLibrary.splice(index, 1);
+        updateUI();
+    }
+}
 
-// ======================================
-// DISPLAY BOOKS
-// ======================================
+// ==========================================================================
+// RENDER & UI UPDATES
+// ==========================================================================
+function updateUI() {
+    renderBooks();
+    renderStats();
+}
 
-function displayBooks() {
+function renderStats() {
+    const total = myLibrary.length;
+    const readCount = myLibrary.filter(b => b.status === "Read").length;
+    const unreadCount = total - readCount;
 
-    const container =
-        document.getElementById("book-container");
+    statTotal.textContent = total;
+    statRead.textContent = readCount;
+    statUnread.textContent = unreadCount;
+}
 
-    // Clear container before re-rendering
+function renderBooks() {
     container.innerHTML = "";
 
+    if (myLibrary.length === 0) {
+        container.classList.add("empty-library");
+        return;
+    }
+    container.classList.remove("empty-library");
+
     myLibrary.forEach((book) => {
-
-        // Create card
-        const card = document.createElement("div");
-
+        const card = document.createElement("article");
         card.classList.add("book-card");
-
-        // Store ID in dataset
         card.dataset.id = book.id;
 
-        // Card content
+        const isRead = book.status === "Read";
+
         card.innerHTML = `
+            <div class="card-meta">
+                <span class="status-badge ${isRead ? 'read' : 'not-read'}">
+                    ${isRead ? 'Completed' : 'Plan to Read'}
+                </span>
+                <span class="page-count">${book.pages} pages</span>
+            </div>
             <h3>${book.title}</h3>
-
-            <p>
-                <strong>Author:</strong>
-                ${book.author}
-            </p>
-
-            <p>
-                <strong>Pages:</strong>
-                ${book.pages}
-            </p>
-
-            <p>
-                <strong>Status:</strong>
-                ${book.status}
-            </p>
+            <p class="book-author">by ${book.author}</p>
+            <div class="card-actions">
+                <button class="btn btn-secondary toggle-btn">Status</button>
+                <button class="btn btn-danger-text remove-btn">Remove</button>
+            </div>
         `;
 
-        // ==========================
-        // TOGGLE BUTTON
-        // ==========================
-
-        const toggleBtn =
-            document.createElement("button");
-
-        toggleBtn.textContent =
-            "Toggle Status";
-
-        toggleBtn.classList.add("btn");
-
-        toggleBtn.addEventListener("click", () => {
-
+        // Attach Contextual Listeners
+        card.querySelector(".toggle-btn").addEventListener("click", () => {
             book.toggleStatus();
-
-            displayBooks();
+            updateUI();
         });
 
-        // ==========================
-        // REMOVE BUTTON
-        // ==========================
-
-        const removeBtn =
-            document.createElement("button");
-
-        removeBtn.textContent = "Remove";
-
-        removeBtn.classList.add("btn");
-
-        removeBtn.addEventListener("click", () => {
-
+        card.querySelector(".remove-btn").addEventListener("click", () => {
             removeBook(book.id);
         });
 
-        // Add buttons to card
-        card.appendChild(toggleBtn);
-        card.appendChild(removeBtn);
-
-        // Add card to container
         container.appendChild(card);
     });
 }
 
-
-// ======================================
-// REMOVE BOOK
-// ======================================
-
-function removeBook(id) {
-
-    const index = myLibrary.findIndex(
-        (book) => book.id === id
-    );
-
-    myLibrary.splice(index, 1);
-
-    displayBooks();
+// ==========================================================================
+// VALIDATION LOGIC
+// ==========================================================================
+function validateInput(inputElement, errorMessage) {
+    if (inputElement.value.trim() === "") {
+        inputElement.setCustomValidity(errorMessage);
+    } else if (inputElement.type === "number" && Number(inputElement.value) <= 0) {
+        inputElement.setCustomValidity("Page count must be greater than zero.");
+    } else {
+        inputElement.setCustomValidity("");
+    }
 }
 
+function runFormValidation() {
+    validateInput(titleInput, "Please present a book title.");
+    validateInput(authorInput, "Please specify an author.");
+    validateInput(pagesInput, "Please input a page count.");
+}
 
-// ======================================
-// DIALOG + FORM
-// ======================================
+// Live Validation Feedback Loops
+[titleInput, authorInput, pagesInput].forEach(input => {
+    input.addEventListener("input", () => {
+        input.setCustomValidity("");
+        input.removeAttribute("data-touched");
+    });
+    
+    // Flag elements visually once the user moves past them blank
+    input.addEventListener("blur", () => {
+        input.setAttribute("data-touched", "true");
+    });
+});
 
-const newBookBtn =
-    document.getElementById("new-book-btn");
-
-const bookDialog =
-    document.getElementById("book-dialog");
-
-const bookForm =
-    document.getElementById("book-form");
-
-const closeDialog =
-    document.getElementById("close-dialog");
-
-
-// ======================================
-// FORM INPUTS
-// ======================================
-
-const titleInput =
-    document.getElementById("title");
-
-const authorInput =
-    document.getElementById("author");
-
-const pagesInput =
-    document.getElementById("pages");
-
-const statusInput =
-    document.getElementById("status");
-
-
-// ======================================
-// OPEN DIALOG
-// ======================================
-
+// ==========================================================================
+// DIALOG CONTROLS & LIFECYCLE
+// ==========================================================================
 newBookBtn.addEventListener("click", () => {
-
     bookDialog.showModal();
 });
 
-
-// ======================================
-// CLOSE DIALOG
-// ======================================
-
-closeDialog.addEventListener("click", () => {
-
+function closeAndResetDialog() {
     bookForm.reset();
-
-    clearValidationMessages();
-
+    [titleInput, authorInput, pagesInput].forEach(input => {
+        input.setCustomValidity("");
+        input.removeAttribute("data-touched");
+    });
     bookDialog.close();
-});
-
-
-// ======================================
-// VALIDATION FUNCTIONS
-// ======================================
-
-function validateTitle() {
-
-    if (titleInput.value.trim() === "") {
-
-        titleInput.setCustomValidity(
-            "The book title must be filled!"
-        );
-
-    } else {
-
-        titleInput.setCustomValidity("");
-    }
 }
 
+closeDialog.addEventListener("click", closeAndResetDialog);
 
-function validateAuthor() {
-
-    if (authorInput.value.trim() === "") {
-
-        authorInput.setCustomValidity(
-            "The author name must be filled!"
-        );
-
-    } else {
-
-        authorInput.setCustomValidity("");
-    }
-}
-
-
-function validatePages() {
-
-    if (pagesInput.value.trim() === "") {
-
-        pagesInput.setCustomValidity(
-            "Pages field cannot be empty!"
-        );
-
-    } else if (pagesInput.value <= 0) {
-
-        pagesInput.setCustomValidity(
-            "Pages must be greater than 0!"
-        );
-
-    } else {
-
-        pagesInput.setCustomValidity("");
-    }
-}
-
-
-// ======================================
-// CLEAR VALIDATION
-// ======================================
-
-function clearValidationMessages() {
-
-    titleInput.setCustomValidity("");
-
-    authorInput.setCustomValidity("");
-
-    pagesInput.setCustomValidity("");
-}
-
-
-// ======================================
-// LIVE VALIDATION
-// ======================================
-
-titleInput.addEventListener(
-    "input",
-    validateTitle
-);
-
-authorInput.addEventListener(
-    "input",
-    validateAuthor
-);
-
-pagesInput.addEventListener(
-    "input",
-    validatePages
-);
-
-
-// ======================================
-// FORM SUBMIT
-// ======================================
-
+// Form Submission handling
 bookForm.addEventListener("submit", (e) => {
-
     e.preventDefault();
 
-    // Run validations
-    validateTitle();
-    validateAuthor();
-    validatePages();
+    runFormValidation();
 
-    // Stop if invalid
     if (!bookForm.checkValidity()) {
-
+        // Mark fields touched to trigger modern custom visual red borders
+        [titleInput, authorInput, pagesInput].forEach(i => i.setAttribute("data-touched", "true"));
         bookForm.reportValidity();
-
         return;
     }
 
-    // Get values
-    const title = titleInput.value;
-
-    const author = authorInput.value;
-
-    const pages = pagesInput.value;
-
-    const status = statusInput.value;
-
-    // Add book
     addBookToLibrary(
-        title,
-        author,
-        pages,
-        status
+        titleInput.value.trim(),
+        authorInput.value.trim(),
+        pagesInput.value,
+        statusInput.value
     );
 
-    // Reset form
-    bookForm.reset();
-
-    clearValidationMessages();
-
-    // Close modal
-    bookDialog.close();
+    closeAndResetDialog();
 });
+
+// Initial load build
+updateUI();
