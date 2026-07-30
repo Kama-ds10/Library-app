@@ -149,7 +149,7 @@ body {
     box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
-    justify-between: space-between;
+    justify-content: space-between;
     min-height: 240px;
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
